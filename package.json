@@ -1,54 +1,35 @@
 {
-    "name": "@piotr-agier/google-drive-mcp",
-    "version": "1.1.1",
-    "description": "Google Drive MCP Server - Model Context Protocol server providing secure access to Google Drive, Docs, Sheets, and Slides through MCP clients e.g. Claude Desktop",
+    "name": "google-drive-cowork",
+    "version": "2.0.0",
+    "description": "Open Claude Cowork with integrated Google Drive MCP - Desktop AI assistant with native Google Drive, Docs, Sheets, and Slides support",
     "license": "MIT",
-    "author": "Piotr Agier <piotr.agier@gmail.com>",
-    "homepage": "https://piotragier.net",
-    "bugs": "https://github.com/piotr-agier/google-drive-mcp/issues",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/piotr-agier/google-drive-mcp.git"
-    },
-    "keywords": [
-        "mcp",
-        "model-context-protocol",
-        "claude",
-        "google-drive",
-        "google-docs",
-        "google-sheets",
-        "google-slides",
-        "google-workspace",
-        "ai",
-        "llm",
-        "integration",
-        "oauth2",
-        "file-management",
-        "document-automation"
-    ],
     "type": "module",
+    "main": "main.js",
     "bin": {
         "google-drive-mcp": "./dist/index.js"
     },
-    "files": [
-        "dist/",
-        "README.md",
-        "LICENSE"
-    ],
     "scripts": {
         "typecheck": "tsc --noEmit",
-        "build": "npm run typecheck && node scripts/build.js",
-        "start": "node dist/index.js",
+        "build:mcp": "npm run typecheck && node scripts/build.js",
+        "start:mcp": "node dist/index.js",
         "auth": "node dist/index.js auth",
+        "start:server": "node server/server.js",
+        "start": "electron .",
+        "dev": "NODE_ENV=development electron .",
+        "setup": "bash setup.sh",
+        "build": "npm run build:mcp",
         "watch": "node scripts/build.js --watch",
-        "prepare": "npm run build",
-        "test": "echo \"No tests yet\" && exit 0",
-        "lint": "tsc --noEmit"
+        "test": "echo \"No tests yet\" && exit 0"
     },
     "dependencies": {
+        "@anthropic-ai/claude-agent-sdk": "^0.2.7",
+        "@composio/core": "latest",
         "@google-cloud/local-auth": "^3.0.1",
         "@modelcontextprotocol/sdk": "1.16.0",
+        "@opencode-ai/sdk": "latest",
         "@types/express": "^5.0.3",
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.5",
         "express": "^5.1.0",
         "google-auth-library": "^9.15.0",
         "googleapis": "^144.0.0",
@@ -60,6 +41,8 @@
     "devDependencies": {
         "@types/node": "^22.9.3",
         "@types/uuid": "^10.0.0",
+        "electron": "^39.2.7",
+        "electron-reload": "^2.0.0-alpha.1",
         "esbuild": "^0.25.8",
         "shx": "^0.3.4",
         "typescript": "^5.6.2"

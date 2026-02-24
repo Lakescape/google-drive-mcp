@@ -44,3 +44,9 @@ coverage/
 *.tmp
 *.temp
 .cache/
+
+# Server runtime config (generated)
+server/opencode.json
+
+# Electron
+*.asar

@@ -4,6 +4,7 @@
       "Edit(node_modules/**)",
       "Edit(dist/**)",
       "Edit(package-lock.json)",
+      "Edit(server/package-lock.json)",
       "Edit(yarn.lock)",
       "Read(.env)",
       "Read(.env.local)",
@@ -12,7 +13,8 @@
       "Read(**/*.key)",
       "Read(**/*.pem)",
       "Read(.git/config)",
-      "Read(gcp-oauth.keys.json)"
+      "Read(gcp-oauth.keys.json)",
+      "Read(**/*tokens.json)"
     ]
   }
 }

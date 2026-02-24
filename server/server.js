@@ -4,7 +4,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import { Composio } from '@composio/core';
 import { getProvider, getAvailableProviders, initializeProviders } from './providers/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -15,8 +14,21 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Initialize Composio
-const composio = new Composio();
+// Initialize Composio (optional - works without it if only using Google Drive)
+let composio = null;
+let composioAvailable = false;
+try {
+  const { Composio: ComposioClass } = await import('@composio/core');
+  if (process.env.COMPOSIO_API_KEY) {
+    composio = new ComposioClass();
+    composioAvailable = true;
+  } else {
+    console.log('[COMPOSIO] No COMPOSIO_API_KEY set - Composio integrations disabled');
+    console.log('[COMPOSIO] Google Drive MCP tools will still work if configured');
+  }
+} catch (err) {
+  console.log('[COMPOSIO] Composio SDK not available:', err.message);
+}
 
 const composioSessions = new Map();
 let defaultComposioSession = null;
@@ -89,6 +101,13 @@ function getGoogleDriveMcpConfig() {
 
 // Pre-initialize Composio session on startup
 async function initializeComposioSession() {
+  if (!composioAvailable) {
+    console.log('[COMPOSIO] Skipped - Composio not configured');
+    // Still write opencode.json with Google Drive config if available
+    updateOpencodeConfig(null, null);
+    return;
+  }
+
   const defaultUserId = 'default-user';
   console.log('[COMPOSIO] Pre-initializing session for:', defaultUserId);
   try {
@@ -96,26 +115,40 @@ async function initializeComposioSession() {
     composioSessions.set(defaultUserId, defaultComposioSession);
     console.log('[COMPOSIO] Session ready with MCP URL:', defaultComposioSession.mcp.url);
 
-    // Update opencode.json with the MCP config
+    // Update opencode.json with all MCP configs
     updateOpencodeConfig(defaultComposioSession.mcp.url, defaultComposioSession.mcp.headers);
     console.log('[OPENCODE] Updated opencode.json with MCP config');
   } catch (error) {
     console.error('[COMPOSIO] Failed to pre-initialize session:', error.message);
+    // Still write Google Drive config even if Composio fails
+    updateOpencodeConfig(null, null);
   }
 }
 
-// Write MCP config to opencode.json
+// Write MCP config to opencode.json (includes both Composio and Google Drive)
 function updateOpencodeConfig(mcpUrl, mcpHeaders) {
   const opencodeConfigPath = path.join(__dirname, 'opencode.json');
-  const config = {
-    mcp: {
-      composio: {
-        type: 'remote',
-        url: mcpUrl,
-        headers: mcpHeaders
-      }
-    }
-  };
+  const mcpConfig = {};
+
+  // Add Composio if available
+  if (mcpUrl && mcpHeaders) {
+    mcpConfig.composio = {
+      type: 'remote',
+      url: mcpUrl,
+      headers: mcpHeaders
+    };
+  }
+
+  // Add Google Drive MCP if enabled
+  if (googleDriveEnabled) {
+    mcpConfig['google-drive'] = {
+      type: 'local',
+      command: 'node',
+      args: [GDRIVE_MCP_PATH]
+    };
+  }
+
+  const config = { mcp: mcpConfig };
   fs.writeFileSync(opencodeConfigPath, JSON.stringify(config, null, 2));
 }
 
@@ -169,33 +202,35 @@ app.post('/api/chat', async (req, res) => {
   });
 
   try {
-    // Get or create Composio session for this user
-    let composioSession = composioSessions.get(userId);
-    if (!composioSession) {
-      console.log('[COMPOSIO] Creating new session for user:', userId);
-      res.write(`data: ${JSON.stringify({ type: 'status', message: 'Initializing session...' })}\n\n`);
-      composioSession = await composio.create(userId);
-      composioSessions.set(userId, composioSession);
-      console.log('[COMPOSIO] Session created with MCP URL:', composioSession.mcp.url);
+    // Build MCP servers config
+    const mcpServers = {};
 
-      // Update opencode.json with the MCP config
-      updateOpencodeConfig(composioSession.mcp.url, composioSession.mcp.headers);
-      console.log('[OPENCODE] Updated opencode.json with MCP config');
-    }
+    // Add Composio if available
+    if (composioAvailable) {
+      let composioSession = composioSessions.get(userId);
+      if (!composioSession) {
+        console.log('[COMPOSIO] Creating new session for user:', userId);
+        res.write(`data: ${JSON.stringify({ type: 'status', message: 'Initializing session...' })}\n\n`);
+        composioSession = await composio.create(userId);
+        composioSessions.set(userId, composioSession);
+        console.log('[COMPOSIO] Session created with MCP URL:', composioSession.mcp.url);
 
-    // Get the provider instance
-    const provider = getProvider(providerName);
-
-    // Build MCP servers config - Composio + Google Drive
-    const mcpServers = {
-      composio: {
+        // Update opencode.json with the MCP config
+        updateOpencodeConfig(composioSession.mcp.url, composioSession.mcp.headers);
+        console.log('[OPENCODE] Updated opencode.json with MCP config');
+      }
+      mcpServers.composio = {
         type: 'http',
         url: composioSession.mcp.url,
         headers: composioSession.mcp.headers
-      },
-      // Merge in Google Drive MCP if available
-      ...getGoogleDriveMcpConfig()
-    };
+      };
+    }
+
+    // Merge in Google Drive MCP if available
+    Object.assign(mcpServers, getGoogleDriveMcpConfig());
+
+    // Get the provider instance
+    const provider = getProvider(providerName);
 
     console.log('[CHAT] Using provider:', provider.name);
     console.log('[CHAT] MCP servers:', Object.keys(mcpServers).join(', '));
@@ -320,10 +355,11 @@ app.get('/api/gdrive/status', (_req, res) => {
 });
 
 await initializeProviders();
-await initializeComposioSession();
 
-// Check Google Drive readiness on startup
+// Check Google Drive readiness before Composio (opencode config needs this)
 googleDriveEnabled = checkGoogleDriveReady();
+
+await initializeComposioSession();
 
 // Start server and keep reference to prevent garbage collection
 const server = app.listen(PORT, () => {
@@ -336,6 +372,7 @@ const server = app.listen(PORT, () => {
   console.log(`  Health:     GET  http://localhost:${PORT}/api/health`);
   console.log(`  GDrive:     GET  http://localhost:${PORT}/api/gdrive/status`);
   console.log(`  Providers:  ${getAvailableProviders().join(', ')}`);
+  console.log(`  Composio:   ${composioAvailable ? 'ENABLED (500+ app integrations)' : 'DISABLED (no API key)'}`);
   console.log(`  Google Drive: ${googleDriveEnabled ? 'ENABLED (38 tools)' : 'DISABLED'}`);
   console.log(`===================================================\n`);
 });

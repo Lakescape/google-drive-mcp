@@ -1393,7 +1393,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "search": {
         const validation = SearchSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const { query: userQuery } = validation.data;
 
@@ -1418,7 +1418,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "createTextFile": {
         const validation = CreateTextFileSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1468,7 +1468,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "updateTextFile": {
         const validation = UpdateTextFileSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1512,7 +1512,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "createFolder": {
         const validation = CreateFolderSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1551,7 +1551,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "listFolder": {
         const validation = ListFolderSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1586,7 +1586,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "deleteItem": {
         const validation = DeleteItemSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1610,7 +1610,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "renameItem": {
         const validation = RenameItemSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1638,7 +1638,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "moveItem": {
         const validation = MoveItemSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1679,7 +1679,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "createGoogleDoc": {
         const validation = CreateGoogleDocSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1766,7 +1766,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "updateGoogleDoc": {
         const validation = UpdateGoogleDocSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1828,7 +1828,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "createGoogleSheet": {
         const validation = CreateGoogleSheetSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1884,7 +1884,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "updateGoogleSheet": {
         const validation = UpdateGoogleSheetSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1905,7 +1905,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "getGoogleSheetContent": {
         const validation = GetGoogleSheetContentSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -1935,7 +1935,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "formatGoogleSheetCells": {
         const validation = FormatGoogleSheetCellsSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2006,7 +2006,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "formatGoogleSheetText": {
         const validation = FormatGoogleSheetTextSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2088,7 +2088,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "formatGoogleSheetNumbers": {
         const validation = FormatGoogleSheetNumbersSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2140,7 +2140,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "setGoogleSheetBorders": {
         const validation = SetGoogleSheetBordersSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2198,7 +2198,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "mergeGoogleSheetCells": {
         const validation = MergeGoogleSheetCellsSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2240,7 +2240,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "addGoogleSheetConditionalFormat": {
         const validation = AddGoogleSheetConditionalFormatSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2339,7 +2339,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "createGoogleSlides": {
         const validation = CreateGoogleSlidesSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2417,7 +2417,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "updateGoogleSlides": {
         const validation = UpdateGoogleSlidesSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2590,7 +2590,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "formatGoogleDocText": {
         const validation = FormatGoogleDocTextSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2670,7 +2670,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "formatGoogleDocParagraph": {
         const validation = FormatGoogleDocParagraphSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2740,7 +2740,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "getGoogleDocContent": {
         const validation = GetGoogleDocContentSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2797,7 +2797,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "getGoogleSlidesContent": {
         const validation = GetGoogleSlidesContentSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2857,7 +2857,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "formatGoogleSlidesText": {
         const validation = FormatGoogleSlidesTextSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -2948,7 +2948,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "formatGoogleSlidesParagraph": {
         const validation = FormatGoogleSlidesParagraphSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -3017,7 +3017,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "styleGoogleSlidesShape": {
         const validation = StyleGoogleSlidesShapeSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -3103,7 +3103,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "setGoogleSlidesBackground": {
         const validation = SetGoogleSlidesBackgroundSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -3143,7 +3143,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "createGoogleSlidesTextBox": {
         const validation = CreateGoogleSlidesTextBoxSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 
@@ -3229,7 +3229,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "createGoogleSlidesShape": {
         const validation = CreateGoogleSlidesShapeSchema.safeParse(request.params.arguments);
         if (!validation.success) {
-          return errorResponse(validation.error.errors[0].message);
+          return errorResponse(validation.error.issues[0].message);
         }
         const args = validation.data;
 

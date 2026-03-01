@@ -19,7 +19,8 @@ let composio = null;
 let composioAvailable = false;
 try {
   const { Composio: ComposioClass } = await import('@composio/core');
-  if (process.env.COMPOSIO_API_KEY) {
+  const composioKey = process.env.COMPOSIO_API_KEY;
+  if (composioKey && !composioKey.includes('your-') && composioKey.length > 10) {
     composio = new ComposioClass();
     composioAvailable = true;
   } else {
